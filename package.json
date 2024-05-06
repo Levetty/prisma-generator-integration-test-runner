@@ -5,7 +5,7 @@
 	"main": "dist/generator.js",
 	"license": "MIT",
 	"bin": {
-		"prisma-generator-it-runner": "dist/index.js"
+		"prisma-generator-integration-test-runner": "dist/index.js"
 	},
 	"engines": {
 		"node": ">=14.0"
