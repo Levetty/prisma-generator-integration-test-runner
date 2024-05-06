@@ -1,4 +1,4 @@
-# prisma-generator-it-runner
+# prisma-generator-integration-test-runner
 
 ### Credit
 
