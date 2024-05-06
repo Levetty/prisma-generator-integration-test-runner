@@ -91,11 +91,18 @@ const sortRecords = <Model>(records: Model[], keys: (keyof Model)[]) => {
 	return records.sort(buildCompareFn(0));
 };
 
-export function _TEST_runIntegrationTest<Return>(
+export function _TEST_ONLY_runIntegrationTest<Return>(
 	db: PrismaClient,
 	t: TestCase<Return> | (() => TestCase<Return>),
 ): jest.ProvidesCallback {
 	return async function () {
+		// To prevent execution in production environments
+		if (process.env.NODE_ENV !== "test") {
+			throw new Error(
+				"integration test runner should only be used in NODE_ENV === test.",
+			);
+		}
+
 		try {
 			const tt = typeof t === "function" ? t() : t;
 

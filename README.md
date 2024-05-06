@@ -53,7 +53,7 @@ const prisma = new PrismaClient();
 describe("addNinja", () => {
   it(
     "should add sasuke and return naruto, sasuke",
-    _TEST_runIntegrationTest(prisma, {
+    _TEST_ONLY_runIntegrationTest(prisma, {
       recordSet: {
         User: [{ id: "1", name: "naruto", email: "naruto@example.com" }],
       },

@@ -1,13 +1,13 @@
 {
-  "compilerOptions": {
-    "target": "es2018",
-    "module": "commonjs",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "skipLibCheck": true,
-    "lib": ["esnext"],
-    "outDir": "./dist",
-    "rootDir": "./src"
-  },
+	"compilerOptions": {
+		"target": "es2018",
+		"module": "commonjs",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"skipLibCheck": true,
+		"lib": ["esnext"],
+		"outDir": "./dist",
+		"rootDir": "./src"
+	}
 }

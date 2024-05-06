@@ -1,4 +1,4 @@
-import { _TEST_runIntegrationTest } from "../prisma/it-runner/runner";
+import { _TEST_ONLY_runIntegrationTest } from "../prisma/it-runner/runner";
 import { PrismaClient } from ".prisma/client";
 
 const prisma = new PrismaClient();
@@ -6,7 +6,7 @@ const prisma = new PrismaClient();
 describe("test", () => {
 	it(
 		"runner",
-		_TEST_runIntegrationTest(prisma, {
+		_TEST_ONLY_runIntegrationTest(prisma, {
 			recordSet: {
 				User: [{ id: "1", name: "naruto", email: "naruto@example.com" }],
 			},
