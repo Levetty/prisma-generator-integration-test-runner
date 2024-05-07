@@ -43,7 +43,7 @@ This library is intended to be used with [Jest](https://github.com/jestjs/jest).
 Basic usage:
 
 ```ts
-import { _TEST_runIntegrationTest } from "../prisma/it-runner/runner";
+import { _TEST_ONLY_runIntegrationTest } from "../prisma/it-runner/runner";
 import { PrismaClient } from ".prisma/client";
 import { addNinja } from "./ninja";
 

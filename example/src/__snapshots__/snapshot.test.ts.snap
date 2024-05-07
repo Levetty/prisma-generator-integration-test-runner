@@ -1,0 +1,16 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`snapshot runner 1`] = `
+[
+  {
+    "email": "naruto@example.com",
+    "id": "1",
+    "name": "naruto",
+  },
+  {
+    "email": "sasuke@example.com",
+    "id": "2",
+    "name": "sasuke",
+  },
+]
+`;

@@ -1,21 +1,11 @@
-import { PrismaClient } from ".prisma/client";
+import { PrismaClient, User } from ".prisma/client";
 
-async function main() {
-	const prisma = new PrismaClient();
-
-	const email = `user.${Date.now()}@prisma.io`;
+export const addNinja = async (
+	prisma: PrismaClient,
+	input: { id: string; name: string; email: string },
+): Promise<User[]> => {
 	await prisma.user.create({
-		data: {
-			email: email,
-		},
+		data: { id: input.id, name: input.name, email: input.email },
 	});
-
-	const users = await prisma.user.findMany();
-
-	console.log(users);
-}
-
-void main().catch((e) => {
-	console.log(e.message);
-	process.exit(1);
-});
+	return prisma.user.findMany();
+};
