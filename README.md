@@ -1,5 +1,7 @@
 # prisma-generator-integration-test-runner
 
+[![npm version](https://badge.fury.io/js/@cloudbase-inc%2Fprisma-generator-integration-test-runner.svg)](https://badge.fury.io/js/@cloudbase-inc%2Fprisma-generator-integration-test-runner)
+
 A Prisma generator for generating integration test runner.
 
 ## Motivation
@@ -17,7 +19,7 @@ Therefore, this library provides a way to generate an integration test runner th
 ### 1. Install the package
 
 ```shell
-npm install -D prisma-generator-integration-test-runner
+npm install -D @cloudbase-inc/prisma-generator-integration-test-runner
 ```
 
 ### 2. Add the generator to your Prisma schema
