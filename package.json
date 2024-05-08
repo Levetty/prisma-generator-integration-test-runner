@@ -1,5 +1,5 @@
 {
-	"name": "prisma-generator-integration-test-runner",
+	"name": "@cloudbase-inc/prisma-generator-integration-test-runner",
 	"description": "A Prisma generator for generating integration test runner",
 	"version": "0.0.1",
 	"main": "dist/generator.js",
@@ -15,8 +15,10 @@
 		"dev": "tsup src/index.ts src/index.ts --watch --onSuccess 'cp -r src/template dist/'",
 		"check:biome": "biome ci generator",
 		"check:type": "tsc --noEmit",
-		"build": "tsup src/index.ts src/index.ts --clean --onSuccess 'cp -r src/template dist/'"
+		"build": "tsup src/index.ts src/index.ts --clean --onSuccess 'cp -r src/template dist/'",
+		"prepublish": "tsup src/index.ts src/index.ts --clean --onSuccess 'cp -r src/template dist/'"
 	},
+	"files": ["dist"],
 	"dependencies": {
 		"@prisma/client": "5.13.0",
 		"@prisma/generator-helper": "5.13.0",
