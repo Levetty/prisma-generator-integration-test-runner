@@ -38,7 +38,8 @@ When executed, by default, this creates an `it-runner` directory under the direc
 
 ## Usage
 
-This library is intended to be used with [Jest](https://github.com/jestjs/jest).
+This library is intended to be used with [Jest](https://github.com/jestjs/jest).  
+You can see [examples](https://github.com/Levetty/prisma-generator-integration-test-runner/tree/main/example).
 
 Basic usage:
 
@@ -140,4 +141,4 @@ When using the `mutatesSortKey`, you can sort the database records by any key an
 
 ## Credit
 
-This implementation is based on the concept devised by @ryukez (Cloudbase, Inc).
+This implementation is based on the concept devised by [@ryukez](https://github.com/ryukez) (Cloudbase, Inc).
