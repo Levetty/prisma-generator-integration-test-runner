@@ -53,9 +53,10 @@ function assertRecords<Model>(
 	sortKeys?: (keyof Model)[],
 ) {
 	expect(actual.length).toEqual(expected.length);
-	(sortKeys ? sortRecords(actual, sortKeys) : actual).forEach((a, index) => {
-		expect(a).toMatchObject(expected[index] as any);
-	});
+	const a = sortKeys ? sortRecords(actual, sortKeys) : actual
+	for (let i = 0; i < a.length; i++) {
+		expect(a[i]).toMatchObject(expected[i] as any);
+	}
 }
 
 // Sorts the object array passed in "records" in ascending order according to the keys provided.

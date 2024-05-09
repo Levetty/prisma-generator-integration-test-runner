@@ -1,4 +1,4 @@
-import { PrismaClient, User } from ".prisma/client";
+import type { PrismaClient, User } from ".prisma/client";
 
 export const addNinja = async (
 	prisma: PrismaClient,

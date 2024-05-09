@@ -1,15 +1,15 @@
-import { GeneratorOptions } from "@prisma/generator-helper";
-import * as fs from "fs";
-import * as path from "path";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import type { GeneratorOptions } from "@prisma/generator-helper";
 
 function renderTemplate(
 	template: string,
 	variables: { [name: string]: string },
 ): string {
 	let out = template;
-	Object.entries(variables).forEach(([name, value]) => {
+	for (const [name, value] of Object.entries(variables)) {
 		out = out.replace(new RegExp(`%\\(${name}\\)`, "g"), value);
-	});
+	}
 	return out;
 }
 
@@ -18,7 +18,7 @@ function toLower(s: string): string {
 }
 
 function formatLines(lines: string[], indent: number): string {
-	return lines.join("\n" + " ".repeat(indent));
+	return lines.join(`\n${" ".repeat(indent)}`);
 }
 
 interface Model {
@@ -49,20 +49,20 @@ function topologicalSort(models: Model[]): Model[][] {
 	const queue: string[] = [];
 	const ranks: { [key: string]: number } = {};
 
-	models.forEach((model) => {
+	for (const model of models) {
 		modelMap[model.name] = model;
 		reverseEdges[model.name] = [];
 		edgeCount[model.name] = model.relations.length;
 
-		if (edgeCount[model.name] == 0) queue.push(model.name);
+		if (edgeCount[model.name] === 0) queue.push(model.name);
 		ranks[model.name] = 0;
-	});
+	}
 
-	models.forEach((model) => {
-		model.relations.forEach((relation) => {
+	for (const model of models) {
+		for (const relation of model.relations) {
 			reverseEdges[relation.to.name].push(model.name);
-		});
-	});
+		}
+	}
 
 	// Assign orders starting from nodes without edges
 	// ranks[from] = max(ranks[to] + 1), representing the fact that a node depends on all children
@@ -76,11 +76,11 @@ function topologicalSort(models: Model[]): Model[][] {
 		if (result.length <= rank) result.push([]);
 		result[rank].push(modelMap[modelName] as Model);
 
-		reverseEdges[modelName].forEach((to) => {
+		for (const to of reverseEdges[modelName]) {
 			ranks[to] = rank + 1; // We can omit max() because ranks will strictly increase
 			edgeCount[to] -= 1;
-			if (edgeCount[to] == 0) queue.push(to);
-		});
+			if (edgeCount[to] === 0) queue.push(to);
+		}
 	}
 
 	return result;
@@ -106,34 +106,30 @@ export async function generate(basePath: string, options: GeneratorOptions) {
 					isRequired: f.isRequired,
 				};
 			}),
-			relations: model.fields
-				.map((field): ModelRelation[] =>
-					// Please refer actual Prisma schema
-					// Forward relation contains onDelete info
-					field.relationOnDelete
-						? [
-								{
-									to: { name: field.type } as Model, // Add dummy model, inserting actual values later
-									fromFields: field.relationFromFields
-										? field.relationFromFields
-										: [],
-									toFields: field.relationToFields
-										? field.relationToFields
-										: [],
-								},
-							]
-						: [],
-				)
-				.flat(),
+			relations: model.fields.flatMap((field): ModelRelation[] =>
+				// Please refer actual Prisma schema
+				// Forward relation contains onDelete info
+				field.relationOnDelete
+					? [
+							{
+								to: { name: field.type } as Model, // Add dummy model, inserting actual values later
+								fromFields: field.relationFromFields
+									? field.relationFromFields
+									: [],
+								toFields: field.relationToFields ? field.relationToFields : [],
+							},
+						]
+					: [],
+			),
 		}),
 	);
 
 	// Insert relation models
-	models.forEach((model) => {
-		model.relations.forEach((relation) => {
-			relation.to = models.find((to) => to.name == relation.to.name) as Model;
-		});
-	});
+	for (const model of models) {
+		for (const relation of model.relations) {
+			relation.to = models.find((to) => to.name === relation.to.name) as Model;
+		}
+	}
 
 	const modelImports = formatLines(
 		models.map((model) => `${model.name},`),
@@ -171,57 +167,54 @@ export async function generate(basePath: string, options: GeneratorOptions) {
 		sortedModels
 			.slice()
 			.reverse()
-			.map((models) =>
+			.flatMap((models) =>
 				// Execute jobs in the same group in parallel
-				[`await Promise.all([`]
+				["await Promise.all(["]
 					.concat(
 						models.map(
 							(model) =>
 								`  recordSet.${model.dbName} ? db.$executeRawUnsafe(\`DELETE FROM "${model.dbName}";\`) : Promise.resolve(),`,
 						),
 					)
-					.concat([`]);`, ``]),
-			)
-			.flat(),
+					.concat(["]);", ""]),
+			),
 		2,
 	);
 
 	const applyRecordSetCreateJobs = formatLines(
-		sortedModels
-			.map((models) =>
-				// Execute jobs in the same group in parallel
-				[`await Promise.all([`]
-					.concat(
-						models.map((model) => {
-							const jsonFields = model.fields.filter(
-								(f) => f.fieldType === "Json",
-							);
-							let mapString = "";
-							if (jsonFields.length > 0) {
-								const jsonFieldsString = jsonFields
-									.map(
-										(jf) =>
-											`${jf.fieldName}: ${
-												jf.isRequired
-													? ""
-													: `r.${jf.fieldName} === undefined ? undefined : `
-											}r.${jf.fieldName} === null ? Prisma.JsonNull : r.${
-												jf.fieldName
-											}`,
-									)
-									.join(", ");
-								mapString = `.map(r => ({ ...r, ${jsonFieldsString}}))`;
-							}
-							return `  recordSet.${model.dbName} ? db.${toLower(
-								model.name,
-							)}.createMany({ data: recordSet.${
-								model.dbName
-							}${mapString} ?? [] }) : Promise.resolve(),`;
-						}),
-					)
-					.concat([`]);`, ``]),
-			)
-			.flat(),
+		sortedModels.flatMap((models) =>
+			// Execute jobs in the same group in parallel
+			["await Promise.all(["]
+				.concat(
+					models.map((model) => {
+						const jsonFields = model.fields.filter(
+							(f) => f.fieldType === "Json",
+						);
+						let mapString = "";
+						if (jsonFields.length > 0) {
+							const jsonFieldsString = jsonFields
+								.map(
+									(jf) =>
+										`${jf.fieldName}: ${
+											jf.isRequired
+												? ""
+												: `r.${jf.fieldName} === undefined ? undefined : `
+										}r.${jf.fieldName} === null ? Prisma.JsonNull : r.${
+											jf.fieldName
+										}`,
+								)
+								.join(", ");
+							mapString = `.map(r => ({ ...r, ${jsonFieldsString}}))`;
+						}
+						return `  recordSet.${model.dbName} ? db.${toLower(
+							model.name,
+						)}.createMany({ data: recordSet.${
+							model.dbName
+						}${mapString} ?? [] }) : Promise.resolve(),`;
+					}),
+				)
+				.concat(["]);", ""]),
+		),
 		2,
 	);
 
@@ -264,7 +257,7 @@ export async function generate(basePath: string, options: GeneratorOptions) {
 			.slice()
 			.reverse()
 			.flat()
-			.map((model): string[] =>
+			.flatMap((model): string[] =>
 				model.relations.length > 0
 					? [`recordSet.${model.dbName}?.forEach((${model.dbName}) => {`]
 							.concat(
@@ -273,10 +266,9 @@ export async function generate(basePath: string, options: GeneratorOptions) {
 									return `  if (!original.${to} && ${model.dbName}.${relation.fromFields[0]} && !recordSet.${to}?.find((${to}) => ${to}.${relation.toFields[0]} == ${model.dbName}.${relation.fromFields[0]})) recordSet.${to} = (recordSet.${to} ?? []).concat(seeder.${to} ? [ { ...seeder.${to}(), ${relation.toFields[0]}: ${model.dbName}.${relation.fromFields[0]} } ] : (() => { throw Error("seeder for ${to} is not defined"); })());`;
 								}),
 							)
-							.concat([`});`, ``])
+							.concat(["});", ""])
 					: [],
-			)
-			.flat(),
+			),
 		2,
 	);
 

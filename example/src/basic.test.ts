@@ -1,6 +1,6 @@
 import { _TEST_ONLY_runIntegrationTest } from "../prisma/it-runner/runner";
-import { PrismaClient } from ".prisma/client";
 import { addNinja } from "./index";
+import { PrismaClient } from ".prisma/client";
 
 const prisma = new PrismaClient();
 
