@@ -1,7 +1,7 @@
 {
 	"name": "@cloudbase-inc/prisma-generator-integration-test-runner",
 	"description": "A Prisma generator for generating integration test runner",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"main": "dist/generator.js",
 	"license": "MIT",
 	"bin": {
