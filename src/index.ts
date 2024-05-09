@@ -1,7 +1,6 @@
 import { generatorHandler } from "@prisma/generator-helper";
 import { generate } from "./generator";
 
-// eslint-disable-next-line local-rules/no-global-function-call
 generatorHandler({
 	onManifest() {
 		return {
