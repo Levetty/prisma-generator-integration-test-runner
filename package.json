@@ -19,8 +19,10 @@
 		"prepublish": "tsup src/index.ts src/index.ts --clean --onSuccess 'cp -r src/template dist/'"
 	},
 	"files": ["dist"],
+	"peerDependencies": {
+		"@prisma/client": "5.13.0"
+	},
 	"dependencies": {
-		"@prisma/client": "5.13.0",
 		"@prisma/generator-helper": "5.13.0",
 		"@types/node": "20.12.8"
 	},
